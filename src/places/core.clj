@@ -22,12 +22,9 @@
                    "org.postgresql.ssl.NonValidatingFactory")}))
 
 
-(defn- connect-to-db
-  []
-  (println "HOLY SHOT!!!!!!" (System/getenv "DATABASE_URL")) 
-  (db/defdb db (db/postgres (url->db-spec 
-                              (System/getenv "DATABASE_URL") 
-                              :dev))))
+(db/defdb db (db/postgres (url->db-spec 
+                            (System/getenv "DATABASE_URL") 
+                            :dev)))
 
 (defentity place
   (pk :id)
@@ -42,9 +39,8 @@
   [& args]
   ;; work around dangerous default behaviour in Clojure
   (alter-var-root #'*read-eval* (constantly false))
-  #_(p/pprint (select place))
-  (connect-to-db)
   ;; starting jetty !
-  (ring/run-jetty routes {:port (or (Integer/parseInt
-                                      (System/getenv "PORT"))
-                                    5000) :join? false}))
+  (ring/run-jetty routes {:port (Integer/parseInt
+                                  (or (System/getenv "PORT") 
+                                      "5000")) 
+                          :join? false}))
