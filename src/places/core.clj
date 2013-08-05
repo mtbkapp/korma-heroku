@@ -21,10 +21,11 @@
      :sslfactory (when (= mode :dev) 
                    "org.postgresql.ssl.NonValidatingFactory")}))
 
-
-(db/defdb db (db/postgres (url->db-spec 
-                            (System/getenv "DATABASE_URL") 
-                            :dev)))
+(defn setup-db
+  []
+  (db/defdb db (db/postgres (url->db-spec 
+                              (System/getenv "DATABASE_URL")
+                              :dev))))
 
 (defentity place
   (pk :id)
@@ -39,6 +40,8 @@
   [& args]
   ;; work around dangerous default behaviour in Clojure
   (alter-var-root #'*read-eval* (constantly false))
+  ;; setup the db connection pool
+  (setup-db)
   ;; starting jetty !
   (ring/run-jetty routes {:port (Integer/parseInt
                                   (or (System/getenv "PORT") 
