@@ -25,7 +25,7 @@
   []
   (db/defdb db (db/postgres (url->db-spec 
                               (System/getenv "DATABASE_URL")
-                              :dev))))
+                              :prod))))
 
 (defentity place
   (pk :id)
